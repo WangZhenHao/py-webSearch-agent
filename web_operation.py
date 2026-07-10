@@ -19,8 +19,8 @@ def _make_api_request(url, **kwargs):
     try:
         response = requests.post(url, headers=headers, **kwargs)
         response.raise_for_status()
-        print(f"API response: {response.status_code}")
-        print(f"Raw body: {response.text[:500]!r}")
+        # print(f"API response: {response.status_code}")
+        # print(f"Raw body: {response.text[:500]!r}")
         return response.json()
     except requests.exceptions.RequestException as e:
         print(f"API request failed: {e}")
@@ -60,7 +60,7 @@ def seach_web(query, engine='bing'):
         "knowledge": full_response.get("knowledge", {}),
         "organic": full_response.get("organic", [])
     }
-    print(full_response.get("organic", []))
+    # print(full_response.get("organic", []))
     return extract_data
 
 
@@ -83,6 +83,7 @@ class PageData(TypedDict):
 def fetch_title_and_body(url: str) -> PageData | None:
     headers = {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+        "Cookie": '_zap=38b91de6-5b66-44d0-a823-08ba6a238e86; d_c0=ssTUZvtaBhyPTmUFLT2p9cHzanagkGVhjTs=|1774242840; _xsrf=BBjDRQXaNUplBLHlzyRZKxZcy4FDRasg; q_c1=3c5470be5c8c465db9c5805565867ac5|1783691697000|1783691697000; Hm_lvt_98beee57fd2ef70ccdd5ca52b9740c49=1783691698; HMACCOUNT=FB33B1A85D0FE46D; SESSIONID=Q34IJ15HtefCGmNckdn69Jc3z21k5RF6o3MqG9Fff50; JOID=V1oRCkhd-xYiZvUhQ29uxANI1HpYC84vYSrDEgYvmXZsK55oJu4JQURn9CpEEzhCv54o8XAXJQAFFIhAtCArvCY=; osd=UVsdAkpb-hoqZPMgT2dswgJE3HheCsInYyzCHg4tn3dgI5xuJ-IBQ0Jm-CJGFTlOt5wu8HwfJwYEGIBCsiEntCQ=; z_c0=2|1:0|10:1783691698|4:z_c0|92:Mi4xbzB4dEF3QUFBQUN5eE5SbS0xb0dIQ1lBQUFCZ0FsVk5za2MtYXdDci1XbWFFbTBEWkVra0JDRmkzQ2NyeW1RZmFR|15f9f5d30b52185091d4966632486f432534fcbb7869a816f944632ad9a320e0; __zse_ck=005_oqme7n2hbUmBeJTto5S7JCi2EoH=glsDQ7qTc=XTZrDbEkNhc4FJCYD9JyAmUEYeiqCIYhgpbfzdh4JkIGI2LHzDAcM5mQmEIwEj7HSl0iERcjvahcTuTSSsrk1eQpWg-ySer20i/vYjXJF8iGLhpNwUNjF7IeDlFuXhIXQPzlpH1iyabOl8qe7xMFG5EiQ8wvx5CmIQ0d2w1ds5mq/yz499hOWee2xYEGBHoED1KGXXzdbYpBRPAYJdIHmZlr5kq; Hm_lpvt_98beee57fd2ef70ccdd5ca52b9740c49=1783691701; BEC=4df94755b0934e8e76471bb2a4ed295a'
     }
 
     try:
@@ -105,11 +106,11 @@ def fetch_title_and_body(url: str) -> PageData | None:
         return {"title": title, "content": body_text}
 
     except requests.RequestException as e:
-        print(f"请求失败: {e}")
+        print(f"请求失败: {url}")
         return None
 
 
 if __name__ == "__main__":
-    # seach_web('深圳光明游玩攻略')
-    result = fetch_title_and_body('https://zhuanlan.zhihu.com/p/644317130')
-    print(result)
+    seach_web('深圳光明游玩攻略')
+    # result = fetch_title_and_body('https://zhuanlan.zhihu.com/p/644317130')
+    # print(result)
