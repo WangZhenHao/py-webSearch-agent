@@ -6,7 +6,10 @@ from typing import Annotated, List
 from langgraph.graph import StateGraph, START, END
 from langgraph.graph.message import add_messages
 from langchain.chat_models import init_chat_model
+from pydantic import BaseModel, Field
 from typing_extensions import TypedDict
+
+from web_operation import seach_web
 
 load_dotenv()
 
@@ -23,26 +26,45 @@ class State(TypedDict):
     user_question: str | None
 
     google_result: str | None
-    select_google_url: list[str] | None
+    select_google_urls: list[str] | None
     google_post_data: list | None
     google_analyze: str | None
 
     bing_result: str | None
-    select_bing_url: list[str] | None
+    select_bing_urls: list[str] | None
     bing_post_data: list | None
     bing_analyze: str | None
 
     final_answer: str | None
 
 
+class PostUrlAnalyze(BaseModel):
+    select_urls: list[str] = Field(description='和用户问题有很强关联的网页链接')
+
 def googel_search(state: State):
-    return {"google_result": "google"}
+    user_question = state["user_question"]
+    print(f"谷歌搜索问题: {user_question}")
+
+    google_result = seach_web(user_question, engine='google')
+    return {"google_result": google_result}
 
 def bing_search(state: State):
-    return {"bing_result": "bing"}
+    user_question = state["user_question"]
+    print(f"必应搜索问题: {user_question}")
+
+    bing_result = seach_web(user_question, engine='bing')
+    return {"bing_result": bing_result}
 
 def analyze_googel_urls(state: State):
-    return {"select_google_url": "google_analyze"}
+    user_question = state["user_question"]
+    google_result = state["google_result"] or ''
+
+    if not google_result:
+        return []
+
+    strctured_llm = llm.with_structured_output(PostUrlAnalyze)
+
+    return {"select_google_urls": "google_analyze"}
 
 def retrieve_googel_post(state: State):
     return {"google_post_data": "google_urls"}
@@ -51,7 +73,7 @@ def analyze_googel_result(state: State):
     return {"google_analyze": "google_result"}
 
 def analyze_bing_urls(state: State):
-    return {"select_bing_url": "bing_analyze"}
+    return {"select_bing_urls": "bing_analyze"}
 
 def retrieve_bing_post(state: State):
     return {"bing_post_data": "bing_urls"}
@@ -111,11 +133,11 @@ def run_chatbot():
             "messages": [{"role": "user", "content": user_input}],
             "user_question": user_input,
             "google_result": None,
-            "select_google_url": None,
+            "select_google_urls": None,
             "google_post_data": None,
             "google_analyze": None,
             "bing_result": None,
-            "select_bing_url": None,
+            "select_bing_urls": None,
             "bing_post_data": None,
             "bing_analyze": None,
             "final_answer": None,
