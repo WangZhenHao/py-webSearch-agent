@@ -191,8 +191,15 @@ def systhesize_analyze(state: State):
         user_question, google_analyze, bing_analyze
     )
 
-    reply = llm.invoke(messages)
-    final_answer = reply.content
+    # reply = llm.invoke(messages)
+    # final_answer = reply.content
+    final_answer = ""
+    for chunk in llm.stream(messages):
+        content = chunk.content or ""
+        print(content, end="", flush=True)
+        final_answer += content
+    print()
+    
     generationMd(final_answer)
     return {"final_answer": final_answer, "messages": [{"role": "assistant", "content": final_answer}]}
 
