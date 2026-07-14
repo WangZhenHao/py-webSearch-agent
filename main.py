@@ -193,7 +193,7 @@ def systhesize_analyze(state: State):
 
     reply = llm.invoke(messages)
     final_answer = reply.content
-    generationMd(final_answer)
+    
     return {"final_answer": final_answer, "messages": [{"role": "assistant", "content": final_answer}]}
 
 
