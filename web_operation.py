@@ -96,7 +96,7 @@ def fetch_title_and_body(url: str) -> PageData | None:
         soup = BeautifulSoup(response.text, 'lxml')  # 用lxml解析器，速度更快
 
         # 3. 提取标题
-        title = soup.title.string.strip() if soup.title else "无标题"
+        title = soup.title.string.strip() if soup.title and soup.title.string else "无标题"
 
         # 4. 提取正文文字（去除所有HTML标签）
         # 注意：这会拿到整个body的所有文本，包括导航栏、侧边栏等
