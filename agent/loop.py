@@ -1,6 +1,8 @@
 from langgraph.graph import StateGraph, END
 import random
 from typing import Dict, List, TypedDict
+import os
+
 
 class AgentState(TypedDict):
     name: str
@@ -50,5 +52,11 @@ graph.set_entry_point("greeting")
 app = graph.compile()
 
 
-app.invoke({"name": "John", "number": [], "counter": 0})
+# app.invoke({"name": "John", "number": [], "counter": 0})
 
+# Save graph to dist directory
+os.makedirs("dist", exist_ok=True)
+png_data = app.get_graph().draw_mermaid_png()
+with open("dist/loop_graph.png", "wb") as f:
+    f.write(png_data)
+print("Graph saved to dist/loop_graph.png")
